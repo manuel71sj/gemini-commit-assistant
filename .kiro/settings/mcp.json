@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "memory-bank": {
+      "command": "npx",
+      "args": [
+        "@movibe/memory-bank-mcp",
+        "--path",
+        "/Users/manuel71/Sources/manuel71/gemini-commit-assistant/memory-bank",
+        "--mode",
+        "code"
+      ]
+    }
+  }
+}
