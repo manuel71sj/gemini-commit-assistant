@@ -1,25 +1,27 @@
 # Implementation Plan
 
-- [ ] 1. Add staged file filtering logic
+- [ ] 1. Add staged file filtering logic (Line 474 in bin/aic)
 
-  - Modify the file status analysis section to create STAGED_STATUS variable
-  - Add conditional logic to filter git status output based on STAGE_ALL flag
-  - Implement grep pattern to extract only staged files (^[AMDRC])
+  - Add STAGED_STATUS variable creation after STATUS variable (around line 474)
+  - Implement conditional logic: if STAGE_ALL=false, filter STATUS to show only staged files using grep '^[AMDRC]'
+  - If STAGE_ALL=true, set STAGED_STATUS equal to STATUS to maintain current --all behavior
   - _Requirements: 1.1, 1.2, 4.3_
 
-- [ ] 2. Update AI prompt generation to use filtered status
+- [ ] 2. Update AI prompt generation to use filtered status (Lines 524, 562, 640, 642)
 
-  - Replace $STATUS with $STAGED_STATUS in both English and Korean Gemini prompts
-  - Ensure DETAILED_MULTILINE_PROMPT uses the correct status information
-  - Update fallback SIMPLE_PROMPT to use filtered status for staged-only commits
+  - Replace $STATUS with $STAGED_STATUS in English DETAILED_MULTILINE_PROMPT (line 524)
+  - Replace $STATUS with $STAGED_STATUS in Korean DETAILED_MULTILINE_PROMPT (line 562)
+  - Update English SIMPLE_PROMPT to use STAGED_STATUS instead of STATUS (line 640)
+  - Update Korean SIMPLE_PROMPT to use STAGED_STATUS instead of STATUS (line 642)
   - _Requirements: 1.1, 1.3, 3.1_
 
-- [ ] 3. Fix change summary calculation
+- [ ] 3. Fix change summary calculation (Lines 738-740)
 
-  - Modify ADDED_FILES, MODIFIED_FILES, and DELETED_FILES calculation logic
-  - Add conditional logic to count files based on STAGE_ALL flag
-  - Use STAGED_STATUS for staged-only commits and STATUS for --all commits
-  - Update grep patterns to match staged file status codes correctly
+  - Modify ADDED_FILES calculation to use conditional logic based on STAGE_ALL flag
+  - Modify MODIFIED_FILES calculation to use conditional logic based on STAGE_ALL flag
+  - Modify DELETED_FILES calculation to use conditional logic based on STAGE_ALL flag
+  - For STAGE_ALL=false: use STAGED_STATUS with patterns '^A', '^M', '^D'
+  - For STAGE_ALL=true: keep current STATUS patterns '^??|^A', '^.M|^M', '^.D|^D'
   - _Requirements: 2.1, 2.2, 4.2_
 
 - [ ] 4. Test and validate the fix
